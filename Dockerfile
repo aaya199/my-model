@@ -37,10 +37,12 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 
 COPY --from=builder /opt/venv /opt/venv
-RUN python -m pip install --no-cache-dir --upgrade \
+RUN /opt/venv/bin/python -m pip install --no-cache-dir --upgrade \
     "msgpack>=1.2.1" \
     "setuptools>=78.1.1" \
-    "urllib3>=2.8.0"
+    "urllib3>=2.8.0" \
+    && /opt/venv/bin/python -c \
+    "import msgpack, setuptools, urllib3; print('VERSIONS:', msgpack.__version__, setuptools.__version__, urllib3.__version__)"
 
 
 COPY src/ ./src/
