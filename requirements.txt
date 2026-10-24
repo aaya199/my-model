@@ -4,3 +4,5 @@ joblib
 fastapi
 uvicorn
 jupyter
+pytest
+httpx2
