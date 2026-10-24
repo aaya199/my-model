@@ -37,6 +37,11 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 
 COPY --from=builder /opt/venv /opt/venv
+RUN python -m pip install --no-cache-dir --upgrade \
+    "msgpack>=1.2.1" \
+    "setuptools>=78.1.1" \
+    "urllib3>=2.8.0"
+
 
 COPY src/ ./src/
 COPY model.joblib .
