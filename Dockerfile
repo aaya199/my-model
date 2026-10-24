@@ -10,15 +10,15 @@ WORKDIR /build
 COPY requirements.txt .
 
 RUN python -m pip install --no-cache-dir --upgrade pip \
-    && python -m pip install --no-cache-dir -r requirements.txt \
-    && python -m pip install --no-cache-dir --upgrade \
-       "setuptools>=78.1.1" \
+    && python -m pip install --no-cache-dir \
+       -r requirements.txt \
        "msgpack>=1.2.1" \
-       "urllib3>=2.8.0"
+       "setuptools>=78.1.1" \
+       "urllib3>=2.8.0" \
+    && python -m pip show msgpack setuptools urllib3
 
-# Verify installed package versions
-RUN python -m pip show setuptools msgpack urllib3
 
+    
 # Stage 2: Runtime image
 FROM python:3.13-slim AS runtime
 
