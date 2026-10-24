@@ -14,11 +14,14 @@ RUN apt-get update \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-RUN pip install --no-cache-dir --upgrade pip setuptools \
-    && pip install --no-cache-dir -r requirements.txt
+RUN python -m pip install --no-cache-dir --upgrade \
+    pip setuptools "msgpack>=1.2.1" "urllib3>=2.8.0" \
+    && python -m pip install --no-cache-dir -r requirements.txt \
+    && python -m pip install --no-cache-dir --upgrade \
+    setuptools "msgpack>=1.2.1" "urllib3>=2.8.0"
 
 
-# Stage 2: Create the runtime image
+# Stage 2: Runtime image
 FROM python:3.13.2-slim AS runtime
 
 ENV VIRTUAL_ENV=/opt/venv
