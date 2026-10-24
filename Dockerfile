@@ -1,28 +1,26 @@
-# Stage 1: Build the Python environment
-FROM python:3.13.2-slim AS builder
+# Stage 1: Build dependencies
+FROM python:3.13-slim AS builder
 
 ENV VIRTUAL_ENV=/opt/venv
-RUN python -m venv $VIRTUAL_ENV
+RUN python -m venv "$VIRTUAL_ENV"
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
 WORKDIR /build
 
 COPY requirements.txt .
 
-RUN apt-get update \
-    && apt-get upgrade -y \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
-
-RUN python -m pip install --no-cache-dir --upgrade \
-    pip setuptools "msgpack>=1.2.1" "urllib3>=2.8.0" \
+RUN python -m pip install --no-cache-dir --upgrade pip \
     && python -m pip install --no-cache-dir -r requirements.txt \
     && python -m pip install --no-cache-dir --upgrade \
-    setuptools "msgpack>=1.2.1" "urllib3>=2.8.0"
+       "setuptools>=78.1.1" \
+       "msgpack>=1.2.1" \
+       "urllib3>=2.8.0"
 
+# Verify installed package versions
+RUN python -m pip show setuptools msgpack urllib3
 
 # Stage 2: Runtime image
-FROM python:3.13.2-slim AS runtime
+FROM python:3.13-slim AS runtime
 
 ENV VIRTUAL_ENV=/opt/venv
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
@@ -37,14 +35,6 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 
 COPY --from=builder /opt/venv /opt/venv
-RUN /opt/venv/bin/python -m pip install --no-cache-dir --upgrade \
-    "msgpack>=1.2.1" \
-    "setuptools>=78.1.1" \
-    "urllib3>=2.8.0" \
-    && /opt/venv/bin/python -c \
-    "import msgpack, setuptools, urllib3; print('VERSIONS:', msgpack.__version__, setuptools.__version__, urllib3.__version__)"
-
-
 COPY src/ ./src/
 COPY model.joblib .
 
