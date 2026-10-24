@@ -1,3 +1,4 @@
+[![CI](https://github.com/aaya199/my-model/actions/workflows/ci.yml/badge.svg)](https://github.com/aaya199/my-model/actions/workflows/ci.yml)
 # AI381 Lab 2 — Machine Learning Operations
 
 This repository contains my AI381 Lab 2 project.
