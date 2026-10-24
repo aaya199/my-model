@@ -35,7 +35,23 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 
 COPY --from=builder /opt/venv /opt/venv
-RUN /opt/venv/bin/python -c "import msgpack, setuptools, urllib3; print('msgpack:', msgpack.__version__); print('setuptools:', setuptools.__version__); print('urllib3:', urllib3.__version__)"
+
+# Verify patched versions before removing setuptools
+RUN /opt/venv/bin/python -c "import msgpack, urllib3; print('msgpack:', msgpack.__version__); print('urllib3:', urllib3.__version__)"
+
+# Remove pip/setuptools/wheel from the venv and the system Python
+# (they bundle old vendored copies of msgpack/urllib3/setuptools that Trivy flags)
+RUN /opt/venv/bin/python -m pip uninstall -y pip setuptools wheel || true \
+    && /usr/local/bin/python -m pip uninstall -y pip setuptools wheel || true \
+    && rm -rf /usr/local/lib/python3.13/site-packages/pip* \
+              /usr/local/lib/python3.13/site-packages/setuptools* \
+              /usr/local/lib/python3.13/site-packages/pkg_resources* \
+              /usr/local/lib/python3.13/site-packages/wheel* \
+              /opt/venv/lib/python3.13/site-packages/pip* \
+              /opt/venv/lib/python3.13/site-packages/setuptools* \
+              /opt/venv/lib/python3.13/site-packages/pkg_resources* \
+              /opt/venv/lib/python3.13/site-packages/wheel*
+
 COPY src/ ./src/
 COPY model.joblib .
 
