@@ -1,5 +1,5 @@
 # AI381 Lab 2 — Churn Prediction API
-
+[![CI](https://github.com/aaya199/my-model/actions/workflows/ci.yml/badge.svg)](https://github.com/aaya199/my-model/actions/workflows/ci.yml)
 ![CI](https://github.com/aaya199/my-model/actions/workflows/ci.yml/badge.svg)
 
 A machine learning API that predicts customer churn probability using a trained Logistic Regression model.
